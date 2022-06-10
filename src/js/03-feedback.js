@@ -3,51 +3,50 @@ const emailEl = document.querySelector("input[type='email']");
 const messageEl = document.querySelector("textarea");
 const formEl = document.querySelector(".feedback-form");
 const KEY = 'feedback-form-state';
-const form = {
-  message: "",
-  email: "",
-};
-const forms = JSON.parse(localStorage.getItem(KEY));
 
-emailInput();
-messageInput();
-
-emailEl.addEventListener("input", throttle(onEmailInput, 500));
-messageEl.addEventListener("input", throttle(onMessageInput, 500));
+formEl.addEventListener('input', throttle(onTextInput, 500));
 formEl.addEventListener("submit", onFormSubmit);
 
-function onMessageInput(evn) {
-  const message = evn.target.value;
-  form.message = message;
-  localStorage.setItem(KEY, JSON.stringify(form));
-}
-
-function onEmailInput(evn) {
-  const email = evn.target.value;
-  form.email = email;
-  localStorage.setItem(KEY, JSON.stringify(form));
+function onTextInput(event) {
+  const { name, value } = event.target;
+  const parsed = JSON.parse(localStorage.getItem(KEY));
+  if (parsed) {
+    const formData = {
+      ...parsed,
+      [name]: value,
+    };
+    localStorage.setItem(KEY, JSON.stringify(formData));
+  } else {
+    const formData = { [name]: value };
+      localStorage.setItem(KEY, JSON.stringify(formData));
+  }
 }
 
 function emailInput() {
-  const saveEmail = localStorage.getItem(KEY);
+  const saveEmail = JSON.parse(localStorage.getItem(KEY));
   if (saveEmail) {
-    emailEl.value = forms.email;
+    emailEl.value = saveEmail.email;
   }
 }
 
 function messageInput() {
-  const saveMessage = localStorage.getItem(KEY);
+  const saveMessage = JSON.parse(localStorage.getItem(KEY));
     if (saveMessage) {
-      messageEl.value = forms.message;
+      messageEl.value = saveMessage.message;
     }
 }
 
 function onFormSubmit(evn) {
+  const saveForm = JSON.parse(localStorage.getItem(KEY));
   evn.preventDefault();
-  if (form.message === '' || form.email === '') {
+  if (saveForm.message === undefined || saveForm.email === undefined) {
     alert('Не все поля заполнены!');
     return;
   };
   evn.target.reset();
   localStorage.removeItem(KEY);
+  console.log(saveForm);
 }
+
+emailInput();
+messageInput();

@@ -10,6 +10,7 @@ formEl.addEventListener("submit", onFormSubmit);
 function onTextInput(event) {
   const { name, value } = event.target;
   const parsed = JSON.parse(localStorage.getItem(KEY));
+   const formData = { email: '', message: '' };
   if (parsed) {
     const formData = {
       ...parsed,
@@ -17,7 +18,7 @@ function onTextInput(event) {
     };
     localStorage.setItem(KEY, JSON.stringify(formData));
   } else {
-    const formData = { [name]: value };
+    // formData = { [name]: value };
       localStorage.setItem(KEY, JSON.stringify(formData));
   }
 }
@@ -39,11 +40,15 @@ function messageInput() {
 function onFormSubmit(evn) {
   const saveForm = JSON.parse(localStorage.getItem(KEY));
   evn.preventDefault();
-  if (saveForm.message === undefined || saveForm.email === undefined) {
+  // if (saveForm.message === undefined || saveForm.email === undefined) {
+  //   alert('Не все поля заполнены!');
+  //   return;
+  // };
+  if (!localStorage.getItem(KEY) || saveForm.message === '' || saveForm.email === '') {
     alert('Не все поля заполнены!');
-    return;
-  };
-  evn.target.reset();
+    return
+  }
+    evn.target.reset();
   localStorage.removeItem(KEY);
   console.log(saveForm);
 }
